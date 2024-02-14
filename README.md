@@ -30,7 +30,7 @@ You have found the easiest way to install & manage WireGuard on any Linux host!
 * A host with Docker installed.
 
 ## Installation
-
+ 
 ### 1. Install Docker
 
 If you haven't installed Docker yet, install it by running:
