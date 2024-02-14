@@ -8,7 +8,6 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   DIR_NAME: asta-wp-2024
-  DOCKER_IMAGE: 3csdesign/asta-wp-2024:staging
 
 jobs:
   docker-image-build:
@@ -16,6 +15,15 @@ jobs:
     permissions:
       contents: read
       packages: write
+
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+        include:
+          - platform: linux/amd64
+            tag_suffix: amd64
+          - platform: linux/arm64
+            tag_suffix: arm64
 
     steps:
       - name: Checkout repository
@@ -28,27 +36,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            latest-{{arch}}
-      
       - name: Create and use buildx builder with docker-container driver
         run: |
           docker buildx create --name mybuilder --use --driver docker-container
           docker buildx inspect --bootstrap
-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging-${{ matrix.tag_suffix }}
+          platforms: ${{ matrix.platform }}
           builder: mybuilder
-        
