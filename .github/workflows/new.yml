@@ -1,0 +1,66 @@
+jobs:
+    build-and-push-amd64:
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        packages: write
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+          
+        - name: Set lowercase image name
+          run: echo "IMAGE_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+  
+        - name: Log in to the Container registry
+          uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+          with:
+            registry: ${{ env.REGISTRY }}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+  
+        - name: Create and use buildx builder with docker-container driver
+          run: |
+            docker buildx create --name mybuilder --use --driver docker-container
+            docker buildx inspect --bootstrap
+  
+        - name: Build and push Docker image for amd64, arm/v7, and 386
+          uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+          with:
+            context: ./
+            push: true
+            tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging-amd64
+            platforms: linux/amd64,linux/arm/v7,linux/386
+            builder: mybuilder
+  
+    build-and-push-arm64:
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        packages: write
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+  
+        - name: Set lowercase image name
+          run: echo "IMAGE_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+  
+        - name: Log in to the Container registry
+          uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+          with:
+            registry: ${{ env.REGISTRY }}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+  
+        - name: Create and use buildx builder with docker-container driver
+          run: |
+            docker buildx create --name mybuilder --use --driver docker-container
+            docker buildx inspect --bootstrap
+  
+        - name: Build and push Docker image for arm64, arm/v7, and 386
+          uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+          with:
+            context: ./
+            push: true
+            tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging-arm64
+            platforms: linux/arm64,linux/arm/v7,linux/386
+            builder: mybuilder
