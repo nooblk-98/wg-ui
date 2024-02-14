@@ -24,6 +24,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set lowercase image name
+        run: echo "IMAGE_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -39,5 +42,5 @@ jobs:
         with:
           context: ./
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.repository | lower }}:staging
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:staging
           platforms: ${{ matrix.platform.os }}/${{ matrix.platform.arch }}
