@@ -12,7 +12,7 @@ You have found the easiest way to install & manage WireGuard on any Linux host!
   <img src="./assets/screenshot.png" width="802" />
 </p>
 
-## Features
+## Features gggwp
 
 * All-in-one: WireGuard + Web UI. 
 * Easy installation, simple to use. 
