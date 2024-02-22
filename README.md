@@ -1,1 +1,1 @@
-# WireGuard Easy
+# WireGuard Easy gg
