@@ -7,7 +7,7 @@ services:
     environment:
       # Change Language:
       # (Supports: en, ru, tr, no, pl, fr, de, ca, es, pt, chs, cht)
-      - LANG=de
+      - LANG=en
       # ⚠️ Required:
       # Change this to your host's public address
       - WG_HOST=155.248.250.4
